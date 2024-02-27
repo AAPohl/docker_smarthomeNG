@@ -22,7 +22,7 @@ if [ -f $PATH_SHNG/etc/.not_mounted ]; then
   _print "Prepare Volumes" # new behavior
   
   # prepare config
-  SHNG_ARG="--config $PATH_CONF $SHNG_ARG"
+  SHNG_ARG="--config_dir $PATH_CONF $SHNG_ARG"
   for i in $DIRS_CONF; do
     if [ -f $PATH_CONF/$i/.not_mounted ]; then
       WARN_MOUNT_CONF="${WARN_MOUNT_CONF# } $i"
@@ -32,6 +32,10 @@ if [ -f $PATH_SHNG/etc/.not_mounted ]; then
       touch $PATH_CONF/$i/.files_created
     fi
   done
+
+  ## workaround logging file missing
+  cp -u $PATH_SHNG/etc/logging.yaml.default $PATH_SHNG/etc/logging.yaml
+  
   if [ "$WARN_MOUNT_CONF" = "$DIRS_CONF" ]; then
     _print WARN: $PATH_CONF not mounted. Config files will not be permanent!
   elif [ "$WARN_MOUNT_CONF" ]; then

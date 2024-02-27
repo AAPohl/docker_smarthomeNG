@@ -28,3 +28,4 @@ jobs:
        else
          exit 1
        fi
+       more /home/runner/work/docker_smarthomeNG/docker_smarthomeNG/tmpMnt/data/log/smarthome-details.log

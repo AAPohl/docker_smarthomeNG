@@ -26,6 +26,8 @@ if [ -f $PATH_SHNG/etc/.not_mounted ]; then
   for i in $DIRS_CONF; do
     if [ -f $PATH_CONF/$i/.not_mounted ]; then
       WARN_MOUNT_CONF="${WARN_MOUNT_CONF# } $i"
+    else    
+      mkdir -p $PATH_CONF/$i
     fi
   done
   

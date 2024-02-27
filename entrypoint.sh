@@ -22,7 +22,7 @@ if [ -f $PATH_SHNG/etc/.not_mounted ]; then
   _print "Prepare Volumes" # new behavior
   
   # prepare config
-  SHNG_ARG="--config $PATH_CONF $SHNG_ARG"
+  SHNG_ARG="--config_dir $PATH_CONF $SHNG_ARG"
   for i in $DIRS_CONF; do
     if [ -f $PATH_CONF/$i/.not_mounted ]; then
       WARN_MOUNT_CONF="${WARN_MOUNT_CONF# } $i"

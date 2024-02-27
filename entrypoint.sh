@@ -26,13 +26,6 @@ if [ -f $PATH_SHNG/etc/.not_mounted ]; then
   for i in $DIRS_CONF; do
     if [ -f $PATH_CONF/$i/.not_mounted ]; then
       WARN_MOUNT_CONF="${WARN_MOUNT_CONF# } $i"
-    elif [ ! -f $PATH_CONF/$i/.files_created ]; then
-      if [ ! -d $PATH_CONF/$i ]; then
-        mkdir -p $PATH_CONF/$i
-        chmod go+rw $PATH_CONF/$i
-      fi     
-      cp -vnr $PATH_SHNG/$i/* $PATH_CONF
-      touch $PATH_CONF/$i/.files_created
     fi
   done
   

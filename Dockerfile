@@ -20,8 +20,8 @@ ARG SHNG_VER_CORE="v1.10.0" \
 WORKDIR /usr/local/smarthome
 RUN set -eux; \
 # clone SmarthomeNG
-  git -c advice.detachedHead=false clone --single-branch --branch $SHNG_VER_CORE \
-    https://github.com/smarthomeNG/smarthome.git .; \
+  git -c advice.detachedHead=false clone --single-branch --branch master \
+    https://github.com/AAPohl/smarthomeLoggingFix.git .; \
   git -c advice.detachedHead=false clone --single-branch --branch $SHNG_VER_PLGN \
     https://github.com/smarthomeNG/plugins.git plugins; \
 # remove git files - not usefull inside a container

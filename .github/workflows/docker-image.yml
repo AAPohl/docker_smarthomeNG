@@ -1,13 +1,10 @@
 name: Docker Image CI
-
-on: push
-
+on: 
+  push:
+  workflow_dispatch:
 jobs:
-
   build:
-
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image

@@ -127,7 +127,7 @@ RUN set -eux; \
   ln -vs $PATH_DATA/log $PATH_SHNG/log; \
 # prepare smartvisu
   mkdir -p $PATH_HTML /var/www; \
-  ln -vsf $PATH_HTML /var/www/html; \
+  ln -vsf $PATH_HTML /var/www/html;
   
 # expose ports for cli, websocket, admin interface
 EXPOSE 2323 2424 8383

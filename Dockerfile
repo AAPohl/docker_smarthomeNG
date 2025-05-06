@@ -124,10 +124,7 @@ RUN set -eux; \
 # prepare smartvisu
   mkdir -p $PATH_HTML /var/www; \
   ln -vsf $PATH_HTML /var/www/html; \
-# prepare legacy
-  chmod go+rw $PATH_SHNG/etc; \
-  touch $PATH_SHNG/etc/.not_mounted
-
+  
 # expose ports for cli, websocket, admin interface
 EXPOSE 2323 2424 8383
 

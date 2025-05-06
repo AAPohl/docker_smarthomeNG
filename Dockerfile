@@ -73,10 +73,7 @@ RUN set -eux; \
     libudev-dev \
     openzwave; \
   rm -rf /var/lib/apt/lists/*; \
-# fix python requirements
-  echo "holidays<0.13" >>/requirements.txt; \
-  #sed -e 's/^\(holidays.*\)/\1,<=0.12;python_version==3.8/g' lib/requirements.txt; \
-# install python requirements
+  # install python requirements
   python -m pip install --no-cache-dir -r requirements.txt
 
 ### Final Stage ##################################################################

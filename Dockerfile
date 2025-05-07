@@ -109,7 +109,7 @@ RUN set -eux; \
       cp -vlr $PATH_SHNG/$i $PATH_CONF; \
     else \
       mkdir -p $PATH_CONF/$i; \
-      chmod --reference=$PATH_SHNG $PATH_CONF/$i; \
+      chmod go+rw $PATH_CONF/$i; \
     fi; \
     touch $PATH_CONF/$i/.not_mounted; \
   done; \

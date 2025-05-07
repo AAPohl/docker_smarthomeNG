@@ -99,7 +99,7 @@ RUN set -eux; \
   PATH_CONF="/mnt/conf"; \
   PATH_DATA="/mnt/data"; \
   PATH_HTML="/mnt/html"; \
-  DIRS_CONF="etc items logics scenes functions"; \
+  DIRS_CONF="etc items logics scenes functions structs"; \
   DIRS_DATA="backup restore cache db log"; \
   chmod go+rws $PATH_SHNG/requirements; \
 # prepare conf

@@ -18,66 +18,49 @@ if [ ${EUID:-$(id -u)} != "0" ]; then
   USER_SHNG=""
 fi
 
-if [ -f $PATH_SHNG/etc/.not_mounted ]; then
-  _print "Prepare Volumes" # new behavior
-  
-  # prepare config
-  SHNG_ARG="--config_dir $PATH_CONF $SHNG_ARG"
-  for i in $DIRS_CONF; do
-    if [ -f $PATH_CONF/$i/.not_mounted ]; then
-      WARN_MOUNT_CONF="${WARN_MOUNT_CONF# } $i"
-    elif [ ! -f $PATH_CONF/$i/.files_created ]; then
-      mkdir -p $PATH_CONF/$i
-      cp -vnr $PATH_SHNG/$i/* $PATH_CONF
-      touch $PATH_CONF/$i/.files_created
-    fi
-  done
+_print "Prepare Volumes" # new behavior
 
-  ## workaround logging file missing
-  cp -u $PATH_SHNG/etc/logging.yaml.default $PATH_SHNG/etc/logging.yaml
-  
-  if [ "$WARN_MOUNT_CONF" = "$DIRS_CONF" ]; then
-    _print WARN: $PATH_CONF not mounted. Config files will not be permanent!
-  elif [ "$WARN_MOUNT_CONF" ]; then
-    _print WARN: Config dirs \"$WARN_MOUNT_CONF\" are not mounted. Related config files will not be permanent!
+# prepare config
+SHNG_ARG="--config_dir $PATH_CONF $SHNG_ARG"
+for i in $DIRS_CONF; do
+  if [ -f $PATH_CONF/$i/.not_mounted ]; then
+    WARN_MOUNT_CONF="${WARN_MOUNT_CONF# } $i"
+   elif [ ! -f $PATH_CONF/$i/.files_created ]; then
+    mkdir -p $PATH_CONF/$i
+    cp -vnr $PATH_SHNG/$i/* $PATH_CONF
+    touch $PATH_CONF/$i/.files_created
   fi
+done
+
+## workaround logging file missing
+cp -u $PATH_SHNG/etc/logging.yaml.default $PATH_SHNG/etc/logging.yaml
   
-  # prepare data
-  for i in $DIRS_DATA; do
-    if [ -f $PATH_DATA/$i/.not_mounted ]; then
-      WARN_MOUNT_DATA="${WARN_MOUNT_DATA# } $i"
-    else
-      mkdir -p $PATH_DATA/$i
-    fi
-  done
-  if [ "$WARN_MOUNT_DATA" = "$DIRS_DATA" ]; then
-    _print WARN: $PATH_DATA not mounted. Data files will not be permanent!
-  elif [ "$WARN_MOUNT_DATA" ]; then
-    _print WARN: Data dirs \"$WARN_MOUNT_DATA\" are not mounted. Related data files will not be permanent!
-  fi
-  
-  # prepare smartvisu
-  mkdir -p $PATH_HTML
-  if [ -f /usr/local/smartvisu.tgz ] && [ ! -f $PATH_HTML/smartvisu/index.php ]; then
-    _print INFO: Copy smartvisu into place...
-    tar -xzf /usr/local/smartvisu.tgz -C $PATH_HTML
-  fi
-  
-else
-  _print "Prepare Volumes - legacy behavior"
-  for i in $DIRS_CONF; do
-    for j in $PATH_CONF/$i/*; do break; done; \
-    [ -f "$j" ] && cp -vnr $PATH_CONF/$i/* $PATH_SHNG/$i; \
-  done
-  PATH_CONF=$PATH_SHNG
-  SKIP_CHOWN_CONF=${SKIP_CHOWN_CONF:-1} # default off to achieve legacy behavior
-  PATH_DATA=$PATH_SHNG/var
-  SKIP_CHOWN_DATA=${SKIP_CHOWN_DATA:-1}
-  PATH_HTML=/var/www/html/smartvisu
-  SKIP_CHOWN_HTML=${SKIP_CHOWN_HTML:-1}
-  WWW_GID=${WWW_GID:-33} # www-data
-  ADD_GID=${ADD_GID:-20} # dial-out
+if [ "$WARN_MOUNT_CONF" = "$DIRS_CONF" ]; then
+  _print WARN: $PATH_CONF not mounted. Config files will not be permanent!
+elif [ "$WARN_MOUNT_CONF" ]; then
+  _print WARN: Config dirs \"$WARN_MOUNT_CONF\" are not mounted. Related config files will not be permanent!
 fi
+  
+# prepare data
+for i in $DIRS_DATA; do
+  if [ -f $PATH_DATA/$i/.not_mounted ]; then
+    WARN_MOUNT_DATA="${WARN_MOUNT_DATA# } $i"
+  else
+    mkdir -p $PATH_DATA/$i
+  fi
+done
+if [ "$WARN_MOUNT_DATA" = "$DIRS_DATA" ]; then
+  _print WARN: $PATH_DATA not mounted. Data files will not be permanent!
+elif [ "$WARN_MOUNT_DATA" ]; then
+  _print WARN: Data dirs \"$WARN_MOUNT_DATA\" are not mounted. Related data files will not be permanent!
+fi
+  
+# prepare smartvisu
+mkdir -p $PATH_HTML
+if [ -f /usr/local/smartvisu.tgz ] && [ ! -f $PATH_HTML/smartvisu/index.php ]; then
+  _print INFO: Copy smartvisu into place...
+  tar -xzf /usr/local/smartvisu.tgz -C $PATH_HTML
+fi 
 
 if [ "$USER_SHNG" ]; then
   # adjust GID, UID, ...

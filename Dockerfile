@@ -12,8 +12,8 @@ RUN set -eux; apt-get update; apt-get install -y --no-install-recommends \
   rm -rf /var/lib/apt/lists/*
 
 # prepare clone
-ARG SHNG_VER_CORE="v1.10.0" \
-    SHNG_VER_PLGN="v1.10.0" \
+ARG SHNG_VER_CORE="v1.11.0" \
+    SHNG_VER_PLGN="v1.11.0" \
     PLGN_DEL="gpio"
 
 # clone smarthomeNG from Git
@@ -73,10 +73,7 @@ RUN set -eux; \
     libudev-dev \
     openzwave; \
   rm -rf /var/lib/apt/lists/*; \
-# fix python requirements
-  echo "holidays<0.13" >>/requirements.txt; \
-  #sed -e 's/^\(holidays.*\)/\1,<=0.12;python_version==3.8/g' lib/requirements.txt; \
-# install python requirements
+  # install python requirements
   python -m pip install --no-cache-dir -r requirements.txt
 
 ### Final Stage ##################################################################
@@ -108,6 +105,10 @@ RUN set -eux; \
 # prepare conf
   mkdir -p $PATH_CONF; \
   for i in $DIRS_CONF; do \
+    if [ ! -d $PATH_SHNG/$i ]; then \
+      mkdir -p $PATH_SHNG/$i; \
+      chmod go+rw $PATH_SHNG/$i; \  
+    fi; \
     cp -vlr $PATH_SHNG/$i $PATH_CONF; \
     touch $PATH_CONF/$i/.not_mounted; \
   done; \
@@ -126,11 +127,8 @@ RUN set -eux; \
   ln -vs $PATH_DATA/log $PATH_SHNG/log; \
 # prepare smartvisu
   mkdir -p $PATH_HTML /var/www; \
-  ln -vsf $PATH_HTML /var/www/html; \
-# prepare legacy
-  chmod go+rw $PATH_SHNG/etc; \
-  touch $PATH_SHNG/etc/.not_mounted
-
+  ln -vsf $PATH_HTML /var/www/html;
+  
 # expose ports for cli, websocket, admin interface
 EXPOSE 2323 2424 8383
 

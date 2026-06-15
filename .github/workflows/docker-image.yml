@@ -25,8 +25,14 @@ jobs:
       - name: Prepare test environment
         run: |
           set -euo pipefail
+
           mkdir -p tmpMnt
-          git clone --depth 1 https://github.com/Martin-Gleiss/smartvisu.git tmpSmartVisu
+          mkdir -p tmpHtml
+
+          git clone \
+            --depth 1 \
+            https://github.com/Martin-Gleiss/smartvisu.git \
+            tmpHtml/smartvisu
 
       - name: Run SmartHomeNG container
         timeout-minutes: 2
@@ -36,7 +42,7 @@ jobs:
           docker run -d \
             --name smarthomeng-test \
             -v "$PWD/tmpMnt:/mnt" \
-            -v "$PWD/tmpSmartVisu:/var/www/html/smartvisu:ro" \
+            -v "$PWD/tmpHtml:/mnt/html" \
             smarthomeng:latest
 
           echo "Waiting for SmartHomeNG startup..."
@@ -58,12 +64,10 @@ jobs:
           echo "=== SmartHomeNG Log ==="
           cat "$LOG"
 
-          # Muss erfolgreich initialisiert haben
           grep -qF -- \
             "--------------------   SmartHomeNG initialization finished   --------------------" \
             "$LOG"
 
-          # Keine echten Fehler zulassen
           if grep -Ei -- \
             "(Traceback|CRITICAL|Exception|ModuleNotFoundError|ImportError|ERROR)" \
             "$LOG"; then

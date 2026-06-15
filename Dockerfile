@@ -35,7 +35,7 @@ RUN set -eux; \
     for i in $PLGN_DEL; do rm -rf plugins/$i; done; \
   fi
 
-### Build Stage 11 - determine requirements for smarthomNG #######################
+### Build Stage 2 - determine requirements for SmartHomeNG ######################
 FROM stage1 AS stage2
 
 ARG PLGN_CONFLICT=""
@@ -49,15 +49,12 @@ ENV PATH="/home/smarthome/.local/bin:${PATH}"
 WORKDIR /usr/local/smarthome
 
 RUN set -eux; \
-# remove some plugins to remove there requirements
   if [ "$PLGN_CONFLICT" ]; then \
     for i in $PLGN_CONFLICT; do rm -rf plugins/$i; done; \
   fi; \
-
-# create requirement files
-RUN python3 bin/smarthome.py \
-      --pip3_command /usr/local/bin/pip3 \
-      --stop
+  python3 bin/smarthome.py \
+    --pip3_command /usr/local/bin/pip3 \
+    --stop
 
 ### Build Stage 3 - build requirements for SmartHomeNG ###########################
 FROM python-base AS stage3

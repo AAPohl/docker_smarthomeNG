@@ -33,7 +33,7 @@ for i in $DIRS_CONF; do
 done
 
 ## workaround logging file missing
-cp -u $PATH_SHNG/etc/logging.yaml.default $PATH_SHNG/etc/logging.yaml
+cp -u $PATH_SHNG/templates/logging.yaml.default $PATH_SHNG/etc/logging.yaml
   
 if [ "$WARN_MOUNT_CONF" = "$DIRS_CONF" ]; then
   _print WARN: $PATH_CONF not mounted. Config files will not be permanent!

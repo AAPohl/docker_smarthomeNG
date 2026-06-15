@@ -49,7 +49,7 @@ RUN set -eux; \
 # necessary to run smarthome.py
   python -m pip install --no-cache-dir "ruamel.yaml<=0.16.8"; \
 # create requirement files
-  python3 bin/smarthome.py --stop
+  python3 bin/smarthome.py --pip3_command /usr/local/bin/pip3 --stop
 
 ### Build Stage 3 - build requirements for smarthomNG ###########################
 FROM python-base AS stage3

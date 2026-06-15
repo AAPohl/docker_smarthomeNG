@@ -75,8 +75,7 @@ RUN set -eux; \
     zlib1g-dev \
     libudev-dev \
     pkg-config \
-    python3-dev \
-    openzwave; \
+    python3-dev; \
   rm -rf /var/lib/apt/lists/*; \
   # install python requirements
   python -m pip install --no-cache-dir -r requirements.txt

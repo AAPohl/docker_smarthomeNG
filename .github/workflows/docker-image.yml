@@ -22,16 +22,21 @@ jobs:
         run: |
           docker image inspect smarthomeng:latest > /dev/null
 
+      - name: Prepare test environment
+        run: |
+          set -euo pipefail
+          mkdir -p tmpMnt
+          git clone --depth 1 https://github.com/Martin-Gleiss/smartvisu.git tmpSmartVisu
+
       - name: Run SmartHomeNG container
         timeout-minutes: 2
         run: |
           set -euo pipefail
 
-          mkdir -p tmpMnt
-
           docker run -d \
             --name smarthomeng-test \
             -v "$PWD/tmpMnt:/mnt" \
+            -v "$PWD/tmpSmartVisu:/var/www/html/smartvisu:ro" \
             smarthomeng:latest
 
           echo "Waiting for SmartHomeNG startup..."

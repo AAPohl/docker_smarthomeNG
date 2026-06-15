@@ -19,16 +19,22 @@ jobs:
             .
 
       - name: Inspect Docker image
-        run: docker image inspect smarthomeng:latest
+        run: docker image inspect smarthomeng:latest > /dev/null
 
       - name: Run SmartHomeNG container
+        timeout-minutes: 2
         run: |
+          set -euo pipefail
+
           mkdir -p tmpMnt
 
-          timeout 60s docker run \
+          docker run -d \
             --name smarthomeng-test \
             -v "$PWD/tmpMnt:/mnt" \
-            smarthomeng:latest || true
+            smarthomeng:latest
+
+          echo "Waiting for SmartHomeNG startup..."
+          sleep 45
 
       - name: Show container logs
         if: always()

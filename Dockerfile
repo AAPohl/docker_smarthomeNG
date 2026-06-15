@@ -1,10 +1,10 @@
 ### dockerfile for smarthomNG flavor "full"
 
 ### select python base image ####################################################
-FROM python:3.10-slim As python-base
+FROM python:3.10-slim AS python-base
 
 ### Build Stage 1 - clone smarthome NG from Git #################################
-FROM python-base As stage1
+FROM python-base AS stage1
 
 # install git
 RUN set -eux; apt-get update; apt-get install -y --no-install-recommends \
@@ -12,8 +12,8 @@ RUN set -eux; apt-get update; apt-get install -y --no-install-recommends \
   rm -rf /var/lib/apt/lists/*
 
 # prepare clone
-ARG SHNG_VER_CORE="v1.11.0" \
-    SHNG_VER_PLGN="v1.11.0" \
+ARG SHNG_VER_CORE="v1.12.0" \
+    SHNG_VER_PLGN="v1.12.0" \
     PLGN_DEL="gpio"
 
 # clone smarthomeNG from Git
@@ -36,7 +36,7 @@ RUN set -eux; \
   fi
 
 ### Build Stage 11 - determine requirements for smarthomNG #######################
-FROM stage1 As stage2
+FROM stage1 AS stage2
 
 ARG PLGN_CONFLICT="appletv hue2"
 
@@ -52,7 +52,7 @@ RUN set -eux; \
   python3 bin/smarthome.py --stop
 
 ### Build Stage 3 - build requirements for smarthomNG ###########################
-FROM python-base As stage3
+FROM python-base AS stage3
 
 COPY --from=stage2 /usr/local/smarthome/requirements/all.txt /requirements.txt
 

@@ -66,20 +66,17 @@ COPY --from=stage2 /usr/local/smarthome/requirements/all.txt /requirements.txt
 # install/update/build requirements
 RUN set -eux; \
   apt-get update; apt-get install -y --no-install-recommends \
-    #pyjq
     automake \
-    #pyjq, openzwave
     build-essential \
-    #bluepy
     libglib2.0-dev \
-    #rrd
     librrd-dev \
-    #pyjq
     libtool \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
     libudev-dev \
+    pkg-config \
+    python3-dev \
     openzwave; \
   rm -rf /var/lib/apt/lists/*; \
   # install python requirements

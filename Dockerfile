@@ -40,10 +40,6 @@ FROM stage1 AS stage2
 
 ARG PLGN_CONFLICT="appletv hue2"
 
-FROM stage1 AS stage2
-
-ARG PLGN_CONFLICT="appletv hue2"
-
 RUN adduser --disabled-password --gecos "" smarthome && \
     chown -R smarthome:smarthome /usr/local/smarthome
 

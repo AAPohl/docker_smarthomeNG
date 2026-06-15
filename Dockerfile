@@ -1,7 +1,7 @@
 ### dockerfile for smarthomNG flavor "full"
 
 ### select python base image ####################################################
-FROM python:3.14-slim AS python-base
+FROM python:3.13-slim AS python-base
 
 ### Build Stage 1 - clone smarthome NG from Git #################################
 FROM python-base AS stage1

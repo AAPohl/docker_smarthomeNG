@@ -61,7 +61,7 @@ jobs:
           # Keine echten Fehler zulassen
           if grep -Ei -- \
             "(Traceback|CRITICAL|Exception|ModuleNotFoundError|ImportError|ERROR)" \
-            "$LOG" | grep -v "plugins.smartvisu"; then
+            "$LOG"; then
             echo "Startup errors found"
             exit 1
           fi

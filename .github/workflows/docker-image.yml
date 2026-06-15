@@ -1,28 +1,63 @@
 name: Docker Image CI
-on: 
+
+on:
   push:
   workflow_dispatch:
+
 jobs:
   build:
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag smarthomeng:latest
-    - name: Inspect Docker image
-      run: docker image inspect smarthomeng:latest  
-    - name: Run SmarthomeNG Container
-      run: |
-        mkdir tmpMnt
-        pwd
-        docker container run -v /home/runner/work/docker_smarthomeNG/docker_smarthomeNG/tmpMnt:/mnt smarthomeng:latest
-      timeout-minutes: 1
-      continue-on-error: true
-    - name: Check Log
-      run: |
-       if [ -f /home/runner/work/docker_smarthomeNG/docker_smarthomeNG/tmpMnt/data/log/smarthome-details.log ]; then
-         echo LogFound
-       else
-         exit 1
-       fi
-       more /home/runner/work/docker_smarthomeNG/docker_smarthomeNG/tmpMnt/data/log/smarthome-details.log
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --file Dockerfile \
+            --tag smarthomeng:latest \
+            .
+
+      - name: Inspect Docker image
+        run: docker image inspect smarthomeng:latest
+
+      - name: Run SmartHomeNG container
+        run: |
+          mkdir -p tmpMnt
+
+          timeout 60s docker run \
+            --name smarthomeng-test \
+            -v "$PWD/tmpMnt:/mnt" \
+            smarthomeng:latest || true
+
+      - name: Show container logs
+        if: always()
+        run: |
+          docker logs smarthomeng-test || true
+
+      - name: Validate SmartHomeNG startup
+        run: |
+          set -euo pipefail
+
+          LOG="tmpMnt/data/log/smarthome-details.log"
+
+          test -f "$LOG"
+
+          echo "=== SmartHomeNG Log ==="
+          cat "$LOG"
+
+          grep -F \
+            "--------------------   SmartHomeNG initialization finished   --------------------" \
+            "$LOG"
+
+          if grep -Ei \
+            "(Traceback|CRITICAL|Exception|ModuleNotFoundError|ImportError)" \
+            "$LOG"; then
+            echo "Startup errors found"
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f smarthomeng-test 2>/dev/null || true

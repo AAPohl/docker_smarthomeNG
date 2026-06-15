@@ -1,7 +1,7 @@
 ### dockerfile for smarthomNG flavor "full"
 
 ### select python base image ####################################################
-FROM python:3.10-slim AS python-base
+FROM python:3.12-slim AS python-base
 
 ### Build Stage 1 - clone smarthome NG from Git #################################
 FROM python-base AS stage1
@@ -40,7 +40,14 @@ FROM stage1 AS stage2
 
 ARG PLGN_CONFLICT="appletv hue2"
 
+RUN adduser --disabled-password --gecos "" smarthome && \
+    chown -R smarthome:smarthome /usr/local/smarthome
+
+USER smarthome
+ENV PATH="/home/smarthome/.local/bin:${PATH}"
+
 WORKDIR /usr/local/smarthome
+
 RUN set -eux; \
 # remove some plugins to remove there requirements
   if [ "$PLGN_CONFLICT" ]; then \
@@ -49,7 +56,7 @@ RUN set -eux; \
 # necessary to run smarthome.py
   python -m pip install --no-cache-dir "ruamel.yaml<=0.16.8"; \
 # create requirement files
-  python3 bin/smarthome.py --stop
+  python3 bin/smarthome.py --pip3_command /usr/local/bin/pip3 --stop
 
 ### Build Stage 3 - build requirements for smarthomNG ###########################
 FROM python-base AS stage3
@@ -59,18 +66,17 @@ COPY --from=stage2 /usr/local/smarthome/requirements/all.txt /requirements.txt
 # install/update/build requirements
 RUN set -eux; \
   apt-get update; apt-get install -y --no-install-recommends \
-    #pyjq
     automake \
-    #pyjq, openzwave
     build-essential \
-    #bluepy
     libglib2.0-dev \
-    #rrd
     librrd-dev \
-    #pyjq
     libtool \
-    #openzwave
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
     libudev-dev \
+    pkg-config \
+    python3-dev \
     openzwave; \
   rm -rf /var/lib/apt/lists/*; \
   # install python requirements
@@ -107,7 +113,7 @@ RUN set -eux; \
   for i in $DIRS_CONF; do \
     if [ ! -d $PATH_SHNG/$i ]; then \
       mkdir -p $PATH_SHNG/$i; \
-      chmod go+rw $PATH_SHNG/$i; \  
+      chmod go+rw $PATH_SHNG/$i; \
     fi; \
     cp -vlr $PATH_SHNG/$i $PATH_CONF; \
     touch $PATH_CONF/$i/.not_mounted; \

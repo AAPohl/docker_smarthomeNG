@@ -38,7 +38,7 @@ RUN set -eux; \
 ### Build Stage 11 - determine requirements for smarthomNG #######################
 FROM stage1 AS stage2
 
-ARG PLGN_CONFLICT="appletv hue2"
+ARG PLGN_CONFLICT=""
 
 RUN adduser --disabled-password --gecos "" smarthome && \
     chown -R smarthome:smarthome /usr/local/smarthome

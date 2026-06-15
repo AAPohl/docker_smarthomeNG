@@ -76,7 +76,9 @@ RUN set -eux; \
     librrd-dev \
     #pyjq
     libtool \
-    #openzwave
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
     libudev-dev \
     openzwave; \
   rm -rf /var/lib/apt/lists/*; \

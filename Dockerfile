@@ -55,9 +55,11 @@ RUN set -eux; \
   fi; \
 
 # create requirement files
-  python3 bin/smarthome.py --pip3_command /usr/local/bin/pip3 --stop
+RUN python3 bin/smarthome.py \
+      --pip3_command /usr/local/bin/pip3 \
+      --stop
 
-### Build Stage 3 - build requirements for smarthomNG ###########################
+### Build Stage 3 - build requirements for SmartHomeNG ###########################
 FROM python-base AS stage3
 
 COPY --from=stage2 /usr/local/smarthome/requirements/all.txt /requirements.txt

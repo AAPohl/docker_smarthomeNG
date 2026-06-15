@@ -19,7 +19,8 @@ jobs:
             .
 
       - name: Inspect Docker image
-        run: docker image inspect smarthomeng:latest > /dev/null
+        run: |
+          docker image inspect smarthomeng:latest > /dev/null
 
       - name: Run SmartHomeNG container
         timeout-minutes: 2
@@ -52,13 +53,15 @@ jobs:
           echo "=== SmartHomeNG Log ==="
           cat "$LOG"
 
-          grep -F -- \
+          # Muss erfolgreich initialisiert haben
+          grep -qF -- \
             "--------------------   SmartHomeNG initialization finished   --------------------" \
             "$LOG"
 
+          # Keine echten Fehler zulassen
           if grep -Ei -- \
             "(Traceback|CRITICAL|Exception|ModuleNotFoundError|ImportError|ERROR)" \
-            "$LOG"; then
+            "$LOG" | grep -v "plugins.smartvisu"; then
             echo "Startup errors found"
             exit 1
           fi

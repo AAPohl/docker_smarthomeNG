@@ -34,7 +34,7 @@ jobs:
             smarthomeng:latest
 
           echo "Waiting for SmartHomeNG startup..."
-          sleep 45
+          sleep 60
 
       - name: Show container logs
         if: always()
@@ -52,12 +52,12 @@ jobs:
           echo "=== SmartHomeNG Log ==="
           cat "$LOG"
 
-          grep -F \
+          grep -F -- \
             "--------------------   SmartHomeNG initialization finished   --------------------" \
             "$LOG"
 
-          if grep -Ei \
-            "(Traceback|CRITICAL|Exception|ModuleNotFoundError|ImportError)" \
+          if grep -Ei -- \
+            "(Traceback|CRITICAL|Exception|ModuleNotFoundError|ImportError|ERROR)" \
             "$LOG"; then
             echo "Startup errors found"
             exit 1

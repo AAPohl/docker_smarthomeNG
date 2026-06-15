@@ -107,7 +107,7 @@ RUN set -eux; \
   for i in $DIRS_CONF; do \
     if [ ! -d $PATH_SHNG/$i ]; then \
       mkdir -p $PATH_SHNG/$i; \
-      chmod go+rw $PATH_SHNG/$i; \  
+      chmod go+rw $PATH_SHNG/$i; \
     fi; \
     cp -vlr $PATH_SHNG/$i $PATH_CONF; \
     touch $PATH_CONF/$i/.not_mounted; \

@@ -3,6 +3,9 @@
 ### select python base image ####################################################
 FROM python:3.13-slim AS python-base
 
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 ### Build Stage 1 - clone smarthome NG from Git #################################
 FROM python-base AS stage1
 

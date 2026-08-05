@@ -1,7 +1,10 @@
 ### dockerfile for smarthomNG flavor "full"
 
 ### select python base image ####################################################
-FROM python:3.13-slim AS python-base
+FROM python:3.14-slim AS python-base
+
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 ### Build Stage 1 - clone smarthome NG from Git #################################
 FROM python-base AS stage1
@@ -35,10 +38,10 @@ RUN set -eux; \
     for i in $PLGN_DEL; do rm -rf plugins/$i; done; \
   fi
 
-### Build Stage 11 - determine requirements for smarthomNG #######################
+### Build Stage 2 - determine requirements for SmartHomeNG ######################
 FROM stage1 AS stage2
 
-ARG PLGN_CONFLICT="appletv hue2"
+ARG PLGN_CONFLICT=""
 
 RUN adduser --disabled-password --gecos "" smarthome && \
     chown -R smarthome:smarthome /usr/local/smarthome
@@ -49,19 +52,25 @@ ENV PATH="/home/smarthome/.local/bin:${PATH}"
 WORKDIR /usr/local/smarthome
 
 RUN set -eux; \
-# remove some plugins to remove there requirements
   if [ "$PLGN_CONFLICT" ]; then \
     for i in $PLGN_CONFLICT; do rm -rf plugins/$i; done; \
   fi; \
-# necessary to run smarthome.py
-  python -m pip install --no-cache-dir "ruamel.yaml<=0.16.8"; \
-# create requirement files
-  python3 bin/smarthome.py --pip3_command /usr/local/bin/pip3 --stop
+  python3 bin/smarthome.py \
+    --pip3_command /usr/local/bin/pip3 \
+    --stop
 
-### Build Stage 3 - build requirements for smarthomNG ###########################
+### Build Stage 3 - build requirements for SmartHomeNG ###########################
 FROM python-base AS stage3
 
 COPY --from=stage2 /usr/local/smarthome/requirements/all.txt /requirements.txt
+
+# Workaround for rrdtool
+RUN set -eux; \
+    echo "=== Vor dem Patch ==="; \
+    grep -i rrd /requirements.txt || true; \
+    sed -i 's/^rrdtool.*/rrdtool-bindings/' /requirements.txt; \
+    echo "=== Nach dem Patch ==="; \
+    grep -i rrd /requirements.txt || true
 
 # install/update/build requirements
 RUN set -eux; \
@@ -76,8 +85,7 @@ RUN set -eux; \
     zlib1g-dev \
     libudev-dev \
     pkg-config \
-    python3-dev \
-    openzwave; \
+    python3-dev; \
   rm -rf /var/lib/apt/lists/*; \
   # install python requirements
   python -m pip install --no-cache-dir -r requirements.txt

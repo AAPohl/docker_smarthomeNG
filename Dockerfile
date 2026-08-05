@@ -61,6 +61,14 @@ FROM python-base AS stage3
 
 COPY --from=stage2 /usr/local/smarthome/requirements/all.txt /requirements.txt
 
+# Workaround for rrdtool
+RUN set -eux; \
+    echo "=== Vor dem Patch ==="; \
+    grep -i rrd /requirements.txt || true; \
+    sed -i 's/^rrdtool.*/rrdtool-bindings/' /requirements.txt; \
+    echo "=== Nach dem Patch ==="; \
+    grep -i rrd /requirements.txt || true
+
 # install/update/build requirements
 RUN set -eux; \
   apt-get update; apt-get install -y --no-install-recommends \
